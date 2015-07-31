@@ -72,7 +72,23 @@ class TestSplittingStrategy(unittest.TestCase):
              [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
              [0, 0, 0, 1, 1, 0, 0, 0, 0, 0]], dtype=np.byte)
         np.testing.assert_array_equal(strategy._score_matrix, expected_matr)
-
+	
+    def test_get_space(self):
+    
+        #assert False
+        strategy = SplitingStrategy(
+            address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
+            index_pos=None,
+            country_pos=None,
+            region_pos=None,
+            subregion_pos=(15, 31),
+            city_pos=(5, 13),
+            street_pos=(50, 55),
+            house_pos=None
+        )
+        self.assertEqual(strategy.get_space(),365)
+        #print(strategy.get_space())
+    
     def test_get_score(self):
 
         strategy = SplitingStrategy(

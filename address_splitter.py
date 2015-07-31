@@ -130,7 +130,32 @@ class SplitingStrategy(object):
         )
 
         return address
-
+    
+    def get_space(self):
+        sum_cols = self._score_matrix.sum(axis=0)
+        #for i in sum_cols:
+        #    print(i)
+        #return 1
+        #print(sum_cols)
+        for i in range(0,sum_cols.size):
+            if sum_cols[i]!=0:
+                left=i
+                break
+        right=0
+        for i in range(0,sum_cols.size):
+            if sum_cols[i]!=0 and i>right:
+                right = i
+        sum_spaces=0
+        len=0
+        for i in range(left, right):
+            if sum_cols[i]!=0:
+                sum_spaces += len*len
+                len=0
+            else:
+                len += 1
+        sum_spaces += len*len
+        return sum_spaces
+    
     def get_score(self):
         """Return weight of strategy. (Small weight is better)
 
