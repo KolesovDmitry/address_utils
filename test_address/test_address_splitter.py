@@ -72,7 +72,54 @@ class TestSplittingStrategy(unittest.TestCase):
              [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
              [0, 0, 0, 1, 1, 0, 0, 0, 0, 0]], dtype=np.byte)
         np.testing.assert_array_equal(strategy._score_matrix, expected_matr)
-	
+        
+        # Test for wrong position values
+        try:
+            strategy = SplitingStrategy(
+                address='0123456789',
+                index_pos=None,
+                country_pos=(0, 11),
+                region_pos=None,
+                subregion_pos=None,
+                city_pos=None,
+                street_pos=None,
+                house_pos=None
+            )
+            raise Exception
+        except ValueError:
+            pass
+
+        try:
+            strategy = SplitingStrategy(
+                address='0123456789',
+                index_pos=None,
+                country_pos=(-1, 10),
+                region_pos=None,
+                subregion_pos=None,
+                city_pos=None,
+                street_pos=None,
+                house_pos=None
+            )
+            raise Exception
+        except ValueError:
+            pass
+
+        try:
+            strategy = SplitingStrategy(
+                address='0123456789',
+                index_pos=None,
+                country_pos=(5, 3),
+                region_pos=None,
+                subregion_pos=None,
+                city_pos=None,
+                street_pos=None,
+                house_pos=None
+            )
+            raise Exception
+        except ValueError:
+            pass
+    
+    
     def test_get_space(self):
     
         #assert False

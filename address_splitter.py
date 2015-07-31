@@ -6,7 +6,7 @@ import sys
 import re
 from itertools import product
 import numpy as np
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict
 
 from address import Address
 
@@ -69,6 +69,12 @@ class SplitingStrategy(object):
             row = self.names[name][0]
             begin, end = self.names[name][1] \
                 if self.names[name][1] else (0, 0)
+
+            if (not (0 <= begin < cols + 1)) or (not (begin <= end < cols + 1)):
+                raise ValueError(u'Wrong input for "%s": the positions '
+                                 u'doesn\'t match address string "%s"' %
+                                 (name, self.address))
+
             m[row, begin:end] = 1
             self._score_matrix = m
 
