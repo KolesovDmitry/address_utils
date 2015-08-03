@@ -133,7 +133,42 @@ class TestSplittingStrategy(unittest.TestCase):
             house_pos=None
         )
         self.assertEqual(strategy.get_space_penalty(),365)
-        #print(strategy.get_space())
+        
+        strategy = SplitingStrategy(
+            address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
+            index_pos=(1, 2),
+            country_pos=(2, 3),
+            region_pos=(3, 4),
+            subregion_pos=(4, 5),
+            city_pos=(5, 6),
+            street_pos=(6, 10),
+            house_pos=(10, 11)
+        )
+        self.assertEqual(strategy.get_space_penalty(),0)
+        
+        strategy = SplitingStrategy(
+            address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
+            index_pos=None,
+            country_pos=None,
+            region_pos=None,
+            subregion_pos=None,
+            city_pos=None,
+            street_pos=None,
+            house_pos=None
+        )
+        self.assertEqual(strategy.get_space_penalty(),0)
+        
+        strategy = SplitingStrategy(
+            address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
+            index_pos=(1, 3),
+            country_pos=(5, 10),
+            region_pos=(20,30),
+            subregion_pos=None,
+            city_pos=None,
+            street_pos=(35, 40),
+            house_pos=(42, 43)
+        )
+        self.assertEqual(strategy.get_space_penalty(),133)
     
     def test_get_score(self):
 

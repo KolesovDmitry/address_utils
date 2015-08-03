@@ -139,6 +139,7 @@ class SplitingStrategy(object):
     
     def get_space_penalty(self):
         sum_cols = self._score_matrix.sum(axis=0)
+        left = 0
         for i in range(sum_cols.size):
             if sum_cols[i] != 0:
                 left = i
