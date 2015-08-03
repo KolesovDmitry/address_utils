@@ -181,7 +181,7 @@ class SplitingStrategy(object):
         blank_count = sum(sum_cols == 0)   # Count of unused symbols
 
         return overlapping * self.overlap_penalty + \
-            blank_count * self.blank_penalty + absence_p
+            blank_count * self.blank_penalty + absence_p + 1 * self.get_space_penalty()
 
 
 class AddressSplitter(object):

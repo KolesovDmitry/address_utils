@@ -242,7 +242,40 @@ class TestSplittingStrategy(unittest.TestCase):
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
                          3 * strategy.blank_penalty)
-
+        
+        strategy = SplitingStrategy(
+            address='0123456789',
+            index_pos=None,
+            country_pos=(2, 3),
+            region_pos=(5, 8),
+            subregion_pos=None,
+            city_pos=None,
+            street_pos=(9, 10),
+            house_pos=None
+        )
+        self.assertEqual(strategy.get_score(),
+                         strategy.absences_penalty['Index'][1] +
+                         strategy.absences_penalty['Subregion'][1] +
+                         strategy.absences_penalty['City'][1] +
+                         strategy.absences_penalty['House'][1] +
+                         5 * strategy.blank_penalty + 5)
+                         
+        strategy = SplitingStrategy(
+            address='0123456789',
+            index_pos=(0, 3),
+            country_pos=(2, 3),
+            region_pos=(5, 8),
+            subregion_pos=None,
+            city_pos=None,
+            street_pos=(9, 10),
+            house_pos=(9, 10)
+        )
+        self.assertEqual(strategy.get_score(),
+                         2 * strategy.overlap_penalty +
+                         strategy.absences_penalty['Subregion'][1] +
+                         strategy.absences_penalty['City'][1] +
+                         3 * strategy.blank_penalty + 5)
+        
 
 class TestAddressSplitter(unittest.TestCase):
 
