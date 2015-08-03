@@ -38,6 +38,7 @@ class SplitingStrategy(object):
         # Penalties:
         self.overlap_penalty = 100  # penalty for overlapping parts of address
         self.blank_penalty = 10    # penalty for unused symbols in the address
+        self.space_ratio = 1       # factor for space penalties
 
         # Create position matrix:
         self.names = OrderedDict(
@@ -138,6 +139,10 @@ class SplitingStrategy(object):
         return address
     
     def get_space_penalty(self):
+        """
+            Подсчитывает штраф за пробелы между кусками адреса, 
+            как сумма квадратов длин пробелов.
+        """
         sum_cols = self._score_matrix.sum(axis=0)
         left = 0
         for i in range(sum_cols.size):
@@ -181,7 +186,7 @@ class SplitingStrategy(object):
         blank_count = sum(sum_cols == 0)   # Count of unused symbols
 
         return overlapping * self.overlap_penalty + \
-            blank_count * self.blank_penalty + absence_p + 1 * self.get_space_penalty()
+            blank_count * self.blank_penalty + absence_p + self.space_ratio * self.get_space_penalty()
 
 
 class AddressSplitter(object):

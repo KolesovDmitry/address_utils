@@ -258,7 +258,7 @@ class TestSplittingStrategy(unittest.TestCase):
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
                          strategy.absences_penalty['House'][1] +
-                         5 * strategy.blank_penalty + 5)
+                         5 * strategy.blank_penalty + strategy.space_ratio * 5)
                          
         strategy = SplitingStrategy(
             address='0123456789',
@@ -274,7 +274,7 @@ class TestSplittingStrategy(unittest.TestCase):
                          2 * strategy.overlap_penalty +
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
-                         3 * strategy.blank_penalty + 5)
+                         3 * strategy.blank_penalty + strategy.space_ratio * 5)
         
 
 class TestAddressSplitter(unittest.TestCase):
