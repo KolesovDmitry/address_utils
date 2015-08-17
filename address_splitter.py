@@ -38,7 +38,7 @@ class SplitingStrategy(object):
         # Penalties:
         self.overlap_penalty = 100  # penalty for overlapping parts of address
         self.blank_penalty = 10    # penalty for unused symbols in the address
-        self.space_ratio = 1       # factor for space penalties
+        self.space_ratio = 0.1       # factor for space penalties
 
         # Create position matrix:
         self.names = OrderedDict(
@@ -435,12 +435,13 @@ class AddressSplitter(object):
 
 
 if __name__ == '__main__':
-    path = 'ng-geocoder/geocoder/algorithms/data/'
+    path = 'C:/Users/HPHome/Documents/GitHub/ng_geocoder/geocoder/algorithms/data/'
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
-        subregion_list_file=path + 'subregions.csv',
-        city_list_file=path + 'cities.csv',
+        subregion_list_file=path + 'feik_subreg.csv',
+        #city_list_file=path + 'new_cities_big_4.csv',
+        city_list_file=path + 'new_cities.csv',
         street_list_file=path + 'streets.csv',
         house_list_file=path + 'houses.csv'
     )
@@ -448,10 +449,23 @@ if __name__ == '__main__':
     with open(datafile) as data:
         for address in data:
             address = address.decode('utf-8')
-            parts = splitter.get_address_parts(address)
-            print address.encode('utf-8'),
-            print (u'I:"%s", C:"%s", R:"%s", Sr: "%s",e C:"%s", S:"%s"' %
-                   (parts['Index'], parts['Country'], parts['Region'],
-                    parts['Subregion'],
-                    parts['City'], parts['Street'])).encode('utf-8')
-            print splitter._drop_parts(address).encode('utf-8').strip()
+            parced_address = splitter.get_parsed_address(address)
+            if parced_address.index is None:
+                parced_address.index=""
+            if parced_address.country is None:
+                parced_address.country=""
+            if parced_address.region is None:
+                parced_address.region=""
+            if parced_address.subregion is None:
+                parced_address.subregion=""
+            if parced_address.settlement is None:
+                parced_address.settlement=""
+            if parced_address.street is None:
+                parced_address.street=""
+            if parced_address.house is None:
+                parced_address.house=""
+            print (u'%s,%s,%s,%s,%s,%s,%s' %
+                  (parced_address.index, parced_address.country, parced_address.region,
+                   parced_address.subregion,
+                   parced_address.settlement, parced_address.street,
+				   parced_address.house)).encode('utf-8')
