@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from progressbar import *
 
 import re
 from itertools import product
@@ -446,8 +447,13 @@ if __name__ == '__main__':
         house_list_file=path + 'houses.csv'
     )
     datafile = sys.argv[1]
+    num_lines = sum(1 for line in open(datafile))
+    pbar = ProgressBar(widgets=[Bar('=', '[', ']'), ' ', Counter(), " of " + str(num_lines), ' ', ETA()]).start()
+    pbar.maxval = num_lines
+    
     with open(datafile) as data:
         for address in data:
+            pbar.update(pbar.currval+1)
             address = address.decode('utf-8')
             parced_address = splitter.get_parsed_address(address)
             if parced_address.index is None:
@@ -469,3 +475,4 @@ if __name__ == '__main__':
                    parced_address.subregion,
                    parced_address.settlement, parced_address.street,
 				   parced_address.house)).encode('utf-8')
+    pbar.finish()
