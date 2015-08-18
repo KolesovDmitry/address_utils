@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from progressbar import *
 
 import re
 from itertools import product
@@ -138,10 +137,10 @@ class SplitingStrategy(object):
         )
 
         return address
-    
+
     def get_space_penalty(self):
         """
-            Подсчитывает штраф за пробелы между кусками адреса, 
+            Подсчитывает штраф за пробелы между кусками адреса,
             как сумма квадратов длин пробелов.
         """
         sum_cols = self._score_matrix.sum(axis=0)
@@ -164,7 +163,7 @@ class SplitingStrategy(object):
                 len += 1
         sum_spaces += len * len
         return sum_spaces
-    
+
     def get_score(self):
         """Return weight of strategy. (Small weight is better)
 
@@ -436,43 +435,52 @@ class AddressSplitter(object):
 
 
 if __name__ == '__main__':
-    path = 'C:/Users/HPHome/Documents/GitHub/ng_geocoder/geocoder/algorithms/data/'
+    '''Main function is used as an example only.
+    Import the necessary class to your project and use it in the project.
+    '''
+
+    from progressbar import ProgressBar, Bar, Counter, ETA
+
+    datafile = sys.argv[1]
+
+    path = 'algorithms/data/'
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
         subregion_list_file=path + 'feik_subreg.csv',
-        #city_list_file=path + 'new_cities_big_4.csv',
+        # city_list_file=path + 'new_cities_big_4.csv',
         city_list_file=path + 'new_cities.csv',
         street_list_file=path + 'streets.csv',
         house_list_file=path + 'houses.csv'
     )
-    datafile = sys.argv[1]
+
     num_lines = sum(1 for line in open(datafile))
     pbar = ProgressBar(widgets=[Bar('=', '[', ']'), ' ', Counter(), " of " + str(num_lines), ' ', ETA()]).start()
     pbar.maxval = num_lines
-    
+
     with open(datafile) as data:
         for address in data:
-            pbar.update(pbar.currval+1)
+            pbar.update(pbar.currval + 1)
             address = address.decode('utf-8')
             parced_address = splitter.get_parsed_address(address)
             if parced_address.index is None:
-                parced_address.index=""
+                parced_address.index = ""
             if parced_address.country is None:
-                parced_address.country=""
+                parced_address.country = ""
             if parced_address.region is None:
-                parced_address.region=""
+                parced_address.region = ""
             if parced_address.subregion is None:
-                parced_address.subregion=""
+                parced_address.subregion = ""
             if parced_address.settlement is None:
-                parced_address.settlement=""
+                parced_address.settlement = ""
             if parced_address.street is None:
-                parced_address.street=""
+                parced_address.street = ""
             if parced_address.house is None:
-                parced_address.house=""
+                parced_address.house = ""
+
             print (u'%s,%s,%s,%s,%s,%s,%s' %
-                  (parced_address.index, parced_address.country, parced_address.region,
-                   parced_address.subregion,
-                   parced_address.settlement, parced_address.street,
-				   parced_address.house)).encode('utf-8')
+                   (parced_address.index, parced_address.country,
+                    parced_address.region, parced_address.subregion,
+                    parced_address.settlement, parced_address.street,
+                    parced_address.house)).encode('utf-8')
     pbar.finish()
