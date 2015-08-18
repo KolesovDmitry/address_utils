@@ -435,7 +435,8 @@ class AddressSplitter(object):
 
 
 if __name__ == '__main__':
-    path = 'C:/Users/HPHome/Documents/GitHub/ng_geocoder/geocoder/algorithms/data/'
+    #path = 'C:/Users/HPHome/Documents/GitHub/ng_geocoder/geocoder/algorithms/data/'
+    path = 'C:\Users\HPHome\Documents\GitHub\address_utils\test_address\csv files'
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
