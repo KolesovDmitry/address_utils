@@ -442,8 +442,11 @@ if __name__ == '__main__':
     from progressbar import ProgressBar, Bar, Counter, ETA
 
     datafile = sys.argv[1]
+    delimiter = ","
+    if len(sys.argv) >= 3:
+        delimiter = sys.argv[2]
 
-    path = 'algorithms/data/'
+    path = 'C:/Users/HPHome/Documents/GitHub/address_utils/test_address/csv_files/'
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
@@ -461,6 +464,7 @@ if __name__ == '__main__':
     with open(datafile) as data:
         for address in data:
             pbar.update(pbar.currval + 1)
+            line_text = address.decode('utf-8')
             address = address.decode('utf-8')
             parced_address = splitter.get_parsed_address(address)
             if parced_address.index is None:
@@ -477,10 +481,9 @@ if __name__ == '__main__':
                 parced_address.street = ""
             if parced_address.house is None:
                 parced_address.house = ""
-
-            print (u'%s,%s,%s,%s,%s,%s,%s' %
-                   (parced_address.index, parced_address.country,
+            result = delimiter.join([line_text, parced_address.index, parced_address.country,
                     parced_address.region, parced_address.subregion,
                     parced_address.settlement, parced_address.street,
-                    parced_address.house)).encode('utf-8')
+                    parced_address.house])
+            print result.encode('utf-8')
     pbar.finish()
