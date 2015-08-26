@@ -446,7 +446,7 @@ if __name__ == '__main__':
     if len(sys.argv) >= 3:
         delimiter = sys.argv[2]
 
-    path = 'C:/Users/HPHome/Documents/GitHub/address_utils/test_address/csv_files/'
+    path = 'test_address/csv_files/'
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
@@ -482,8 +482,8 @@ if __name__ == '__main__':
             if parced_address.house is None:
                 parced_address.house = ""
             result = delimiter.join([line_text, parced_address.index, parced_address.country,
-                    parced_address.region, parced_address.subregion,
-                    parced_address.settlement, parced_address.street,
-                    parced_address.house])
+                                     parced_address.region, parced_address.subregion,
+                                     parced_address.settlement, parced_address.street,
+                                     parced_address.house])
             print result.encode('utf-8')
     pbar.finish()
