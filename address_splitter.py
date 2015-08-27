@@ -450,9 +450,9 @@ if __name__ == '__main__':
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
-        subregion_list_file=path + 'feik_subreg.csv',
-        # city_list_file=path + 'new_cities_big_4.csv',
-        city_list_file=path + 'new_cities.csv',
+        subregion_list_file=path + 'subregions.csv',
+        # city_list_file=path + 'cities_big.csv',
+        city_list_file=path + 'cities.csv',
         street_list_file=path + 'streets.csv',
         house_list_file=path + 'houses.csv'
     )
