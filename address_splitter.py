@@ -446,7 +446,7 @@ if __name__ == '__main__':
     if len(sys.argv) >= 3:
         delimiter = sys.argv[2]
 
-    path = 'test_address/csv_files/'
+    path = 'csv_files/'
     splitter = AddressSplitter(
         country_list_file=path + 'countries.csv',
         region_list_file=path + 'regions.csv',
