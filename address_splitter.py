@@ -24,7 +24,8 @@ class SplitingStrategy(object):
                  subregion_pos,
                  city_pos,
                  street_pos,
-                 house_pos):
+                 house_pos,
+                 poi_pos):
 
         self.address = address
         self.index_pos = index_pos
@@ -34,6 +35,7 @@ class SplitingStrategy(object):
         self.city_pos = city_pos
         self.street_pos = street_pos
         self.house_pos = house_pos
+        self.poi_pos = poi_pos
 
         # Penalties:
         self.overlap_penalty = 100  # penalty for overlapping parts of address
@@ -49,7 +51,8 @@ class SplitingStrategy(object):
             Subregion=(3, self.subregion_pos),
             City=(4, self.city_pos),
             Street=(5, self.street_pos),
-            House=(6, self.house_pos)
+            House=(6, self.house_pos),
+            Poi=(7, self.poi_pos)
         )
 
         # Penalties for absence of the address parts
@@ -60,8 +63,14 @@ class SplitingStrategy(object):
             Subregion=(self.names['Subregion'][0], 2),
             City=(self.names['City'][0], 13),
             Street=(self.names['Street'][0], 7),
-            House=(self.names['House'][0], 5)
+            House=(self.names['House'][0], 5),
+            Poi=(self.names['Poi'][0], 1)
         )
+
+        # Create the score matrix: it is the matrix of ones and zeros.
+        # self.names are mapped to rows of the matrix:
+        # Index => the 0-th row of the matrix
+        # Country => the 1st row ...
 
         rows = len(self.names)
         cols = len(self.address)
@@ -77,7 +86,7 @@ class SplitingStrategy(object):
                                  (name, self.address))
 
             m[row, begin:end] = 1
-            self._score_matrix = m
+        self._score_matrix = m
 
     def __eq__(self, other):
         if self.address != other.address:
@@ -124,6 +133,11 @@ class SplitingStrategy(object):
         return self.address[self.house_pos[0]:self.house_pos[1]] \
             if self.house_pos else None
 
+    @property
+    def poi_name(self):
+        return self.address[self.poi_pos[0]:self.poi_pos[1]] \
+            if self.poi_pos else None
+
     def get_parsed_address(self):
         address = Address(
             raw_address=self.address,
@@ -133,7 +147,8 @@ class SplitingStrategy(object):
             subregion=self.subregion_name,
             settlement=self.city_name,
             street=self.street_name,
-            house=self.house_num
+            house=self.house_num,
+            poi=self.poi_name
         )
 
         return address
@@ -143,6 +158,7 @@ class SplitingStrategy(object):
             Подсчитывает штраф за пробелы между кусками адреса,
             как сумма квадратов длин пробелов.
         """
+        # TODO: облагородить код функции
         sum_cols = self._score_matrix.sum(axis=0)
         left = 0
         for i in range(sum_cols.size):
@@ -186,7 +202,8 @@ class SplitingStrategy(object):
         blank_count = sum(sum_cols == 0)   # Count of unused symbols
 
         return overlapping * self.overlap_penalty + \
-            blank_count * self.blank_penalty + absence_p + self.space_ratio * self.get_space_penalty()
+               blank_count * self.blank_penalty + absence_p + \
+               self.space_ratio * self.get_space_penalty()
 
 
 class AddressSplitter(object):
@@ -331,8 +348,11 @@ class AddressSplitter(object):
         indxs = self._get_index_pos(address)
         indxs['None_position'] = [None]
 
+        poi = self._get_index_pos(address)
+        poi['None_position'] = [None]
+
         parts = [p for p in [indxs, cntrs, regns,
-                             subregs, cities, strts, houses]]
+                             subregs, cities, strts, houses, poi]]
 
         positions = [(indxs[s[0]] if s[0] else [None],
                       cntrs[s[1]] if s[1] else [None],
@@ -340,7 +360,8 @@ class AddressSplitter(object):
                       subregs[s[3]] if s[3] else [None],
                       cities[s[4]] if s[4] else [None],
                       strts[s[5]] if s[5] else [None],
-                      houses[s[6]] if s[6] else [None])
+                      houses[s[6]] if s[6] else [None],
+                      poi[s[7]] if s[7] else [None])
                      for s in product(*tuple(parts))]
 
         strategies = []
@@ -353,7 +374,8 @@ class AddressSplitter(object):
                 subregion_pos=p[3],
                 city_pos=p[4],
                 street_pos=p[5],
-                house_pos=p[6])
+                house_pos=p[6],
+                poi_pos=p[7])
                 for p in product(*pos)
             ]
             strategies += s

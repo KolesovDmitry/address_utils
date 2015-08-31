@@ -35,9 +35,10 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=(0, 10),
             city_pos=(0, 10),
             street_pos=(0, 10),
-            house_pos=(0, 10)
+            house_pos=(0, 10),
+            poi_pos=(0, 10)
         )
-        expected_matr = np.ones((7, 10), dtype=np.byte)
+        expected_matr = np.ones((8, 10), dtype=np.byte)
         np.testing.assert_array_equal(strategy._score_matrix, expected_matr)
 
         strategy = SplitingStrategy(
@@ -48,9 +49,10 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=None,
-            house_pos=None
+            house_pos=None,
+            poi_pos=None
         )
-        expected_matr = np.zeros((7, 10), dtype=np.byte)
+        expected_matr = np.zeros((8, 10), dtype=np.byte)
         np.testing.assert_array_equal(strategy._score_matrix, expected_matr)
 
         strategy = SplitingStrategy(
@@ -61,7 +63,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=(0, 10),
-            house_pos=(3, 5)
+            house_pos=(3, 5),
+            poi_pos=None
         )
         expected_matr = np.array(
             [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -70,7 +73,8 @@ class TestSplittingStrategy(unittest.TestCase):
              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
              [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-             [0, 0, 0, 1, 1, 0, 0, 0, 0, 0]], dtype=np.byte)
+             [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=np.byte)
         np.testing.assert_array_equal(strategy._score_matrix, expected_matr)
         
         # Test for wrong position values
@@ -83,7 +87,8 @@ class TestSplittingStrategy(unittest.TestCase):
                 subregion_pos=None,
                 city_pos=None,
                 street_pos=None,
-                house_pos=None
+                house_pos=None,
+                poi_pos=None
             )
             raise Exception
         except ValueError:
@@ -98,7 +103,8 @@ class TestSplittingStrategy(unittest.TestCase):
                 subregion_pos=None,
                 city_pos=None,
                 street_pos=None,
-                house_pos=None
+                house_pos=None,
+                poi_pos=None
             )
             raise Exception
         except ValueError:
@@ -113,7 +119,8 @@ class TestSplittingStrategy(unittest.TestCase):
                 subregion_pos=None,
                 city_pos=None,
                 street_pos=None,
-                house_pos=None
+                house_pos=None,
+                poi_pos=None
             )
             raise Exception
         except ValueError:
@@ -130,7 +137,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=(15, 31),
             city_pos=(5, 13),
             street_pos=(50, 55),
-            house_pos=None
+            house_pos=None,
+            poi_pos=None
         )
         self.assertEqual(strategy.get_space_penalty(),365)
         
@@ -142,7 +150,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=(4, 5),
             city_pos=(5, 6),
             street_pos=(6, 10),
-            house_pos=(10, 11)
+            house_pos=(10, 11),
+            poi_pos=None
         )
         self.assertEqual(strategy.get_space_penalty(),0)
         
@@ -154,7 +163,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=None,
-            house_pos=None
+            house_pos=None,
+            poi_pos=None
         )
         self.assertEqual(strategy.get_space_penalty(),0)
         
@@ -166,7 +176,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=(35, 40),
-            house_pos=(42, 43)
+            house_pos=(42, 43),
+            poi_pos=None
         )
         self.assertEqual(strategy.get_space_penalty(),133)
     
@@ -180,7 +191,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=None,
-            house_pos=None
+            house_pos=None,
+            poi_pos=None
         )
         self.assertEqual(strategy.get_score(),
                          10 * strategy.blank_penalty +
@@ -190,7 +202,8 @@ class TestSplittingStrategy(unittest.TestCase):
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
                          strategy.absences_penalty['Street'][1] +
-                         strategy.absences_penalty['House'][1])
+                         strategy.absences_penalty['House'][1] +
+                         strategy.absences_penalty['Poi'][1])
 
         strategy = SplitingStrategy(
             address='0123456789',
@@ -200,14 +213,16 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=(0, 10),
-            house_pos=None
+            house_pos=None,
+            poi_pos=None
         )
         # expected_matr = np.array(
         #    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         #     [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
         #     [0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
         #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        #     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        #     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], dtype=np.byte)
         # sum: 2  2  2  2  2  2  2  2  2  2
         self.assertEqual(strategy.get_score(),
@@ -215,7 +230,8 @@ class TestSplittingStrategy(unittest.TestCase):
                          strategy.absences_penalty['Index'][1] +
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
-                         strategy.absences_penalty['House'][1])
+                         strategy.absences_penalty['House'][1] +
+                         strategy.absences_penalty['Poi'][1])
 
         strategy = SplitingStrategy(
             address='0123456789',
@@ -225,7 +241,8 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=(3, 5),
-            house_pos=(8, 9)
+            house_pos=(8, 9),
+            poi_pos=None
         )
         # expected_matr = np.array(
         #    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -234,13 +251,16 @@ class TestSplittingStrategy(unittest.TestCase):
         #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         #     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],], dtype=np.byte)
+        #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        #     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        #                                     ], dtype=np.byte)
         # sum: 0  0  1  2  2  1  1  1  0  1
         self.assertEqual(strategy.get_score(),
                          2 * strategy.overlap_penalty +
                          strategy.absences_penalty['Index'][1] +
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
+                         strategy.absences_penalty['Poi'][1] +
                          3 * strategy.blank_penalty)
         
         strategy = SplitingStrategy(
@@ -251,13 +271,15 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=(9, 10),
-            house_pos=None
+            house_pos=None,
+            poi_pos=None
         )
         self.assertEqual(strategy.get_score(),
                          strategy.absences_penalty['Index'][1] +
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
                          strategy.absences_penalty['House'][1] +
+                         strategy.absences_penalty['Poi'][1] +
                          5 * strategy.blank_penalty + strategy.space_ratio * 5)
                          
         strategy = SplitingStrategy(
@@ -268,12 +290,14 @@ class TestSplittingStrategy(unittest.TestCase):
             subregion_pos=None,
             city_pos=None,
             street_pos=(9, 10),
-            house_pos=(9, 10)
+            house_pos=(9, 10),
+            poi_pos=None
         )
         self.assertEqual(strategy.get_score(),
                          2 * strategy.overlap_penalty +
                          strategy.absences_penalty['Subregion'][1] +
                          strategy.absences_penalty['City'][1] +
+                         strategy.absences_penalty['Poi'][1] +
                          3 * strategy.blank_penalty + strategy.space_ratio * 5)
         
 
@@ -491,7 +515,8 @@ class TestAddressSplitter(unittest.TestCase):
             subregion_pos=None,
             city_pos=(22, 28),
             street_pos=(30, 42),
-            house_pos=(44, 49)
+            house_pos=(44, 49),
+            poi_pos=None
         )
         self.assertEqual(got, expected)
 
@@ -504,7 +529,8 @@ class TestAddressSplitter(unittest.TestCase):
             subregion_pos=None,
             city_pos=(22, 28),
             street_pos=(30, 42),
-            house_pos=(44, 49)
+            house_pos=(44, 49),
+            poi_pos=None
         )
         self.assertFalse(got == not_expected)
 
