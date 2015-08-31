@@ -13,7 +13,7 @@ class Address(object):
                  settlement=None,
                  street=None,
                  house=None,
-                 strict=False):
+                 poi=None):
         """Initialization of address
 
         :param raw_address: address string (unparsed)
@@ -39,11 +39,10 @@ class Address(object):
 
         :param house:           House number
         :type house:            unicode
-        """
 
-        # Flag: raise exception if
-        # address contains unknown symbols or fields
-        self.strict = strict
+        :param poi:         Point Of Interes
+        :type poi:          unucode
+        """
 
         self._raw_address = raw_address
 
@@ -54,6 +53,7 @@ class Address(object):
         self._settlement = settlement
         self._street = street
         self._house = house
+        self._poi = poi
 
     def __unicode__(self):
         parts = [
@@ -63,7 +63,8 @@ class Address(object):
              self.subregion,
              self.settlement,
              self.street,
-             self.house]
+             self.house,
+             self.poi]
             if p]
         return ', '.join(parts)
 
@@ -84,13 +85,12 @@ class Address(object):
             return False
         if self.house != other.house:
             return False
+        if self.poi != other.poi:
+            return False
         return True
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
-    def set_strict(self, strict_value):
-        self.strict = strict_value
 
     @property
     def raw_address(self):
@@ -154,4 +154,12 @@ class Address(object):
 
     @house.setter
     def house(self, value):
-        self._house = value
+        self._house = value   \
+
+    @property
+    def poi(self):
+        return self._poi
+
+    @poi.setter
+    def house(self, value):
+        self._poi= value
