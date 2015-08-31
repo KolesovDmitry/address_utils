@@ -18,6 +18,7 @@ class TestAddress(unittest.TestCase):
         settlement = u'Подольск'
         street = u'Малая'
         house = u'234'
+        poi = 'Станция Канавка'
 
         address = Address(
             index=index,
@@ -26,18 +27,19 @@ class TestAddress(unittest.TestCase):
             subregion=subregion,
             settlement=settlement,
             street=street,
-            house=house
+            house=house,
+            poi=poi
         )
 
         expected = ','.join([
             index, country, region, subregion,
-            settlement, street, house
+            settlement, street, house, poi
         ])
         got = ','.join([
             address.index, address.country,
             address.region, address.subregion,
             address.settlement, address.street,
-            address.house
+            address.house, address.poi
         ])
         self.assertEqual(got, expected)
 
@@ -53,11 +55,12 @@ class TestAddress(unittest.TestCase):
         address.settlement = settlement
         address.street = street
         address.house = house
+        address.poi = poi
         got = ','.join([
             address.index, address.country,
             address.region, address.subregion,
             address.settlement, address.street,
-            address.house
+            address.house, address.poi
         ])
 
         self.assertEqual(got, expected)
@@ -70,6 +73,7 @@ class TestAddress(unittest.TestCase):
         settlement = u'Подольск'
         street = u'Малая'
         house = u'234'
+        poi = 'Ресторан Рыбный'
 
         address = Address(
             index=index,
@@ -78,13 +82,14 @@ class TestAddress(unittest.TestCase):
             subregion=subregion,
             settlement=settlement,
             street=street,
-            house=house
+            house=house,
+            poi=poi
         )
 
         # Index is deleted from the representation
         expected = ', '.join([
             country, region, subregion,
-            settlement, street, house
+            settlement, street, house, poi
         ])
         self.assertEqual(unicode(address), expected)
 
@@ -94,8 +99,6 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(addr1, addr2)
 
         for key, val in addr1.__dict__.iteritems():
-            if key == 'strict':
-                continue
             addr1.__dict__[key] = 'qwerty' + unicode(val)
             self.assertNotEqual(addr1, addr2)
             addr2.__dict__[key] = 'qwerty' + unicode(val)
