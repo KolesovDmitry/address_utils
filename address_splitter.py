@@ -153,7 +153,7 @@ class SplitingStrategy(object):
 
         return address
 
-    def get_space_penalty(self):
+    def _get_space_penalty(self):
         """
             Подсчитывает штраф за пробелы между кусками адреса,
             как сумма квадратов длин пробелов.
@@ -203,7 +203,7 @@ class SplitingStrategy(object):
 
         return overlapping * self.overlap_penalty + \
                blank_count * self.blank_penalty + absence_p + \
-               self.space_ratio * self.get_space_penalty()
+               self.space_ratio * self._get_space_penalty()
 
 
 class AddressSplitter(object):
@@ -217,13 +217,15 @@ class AddressSplitter(object):
                  subregion_list_file,
                  city_list_file,
                  street_list_file,
-                 house_list_file):
+                 house_list_file,
+                 poi_list_file):
         """
         :param country_list_file: file name for list of country names
         :param region_list_file:  file name for list of region names
         :param city_list_file:    file name for list of city names
         :param street_list_file:  file name for list of street names
-        :param house_list_file:  file name for list of houses names
+        :param house_list_file:   file name for list of houses names
+        :param poi_list_file:     file name for list of poi names
 
         The files must contain regular expressions for names. Check that
         the RE are:
@@ -248,6 +250,9 @@ class AddressSplitter(object):
         self.house_list = \
             {name: re.compile(r'\b' + name + r'\b', re.I | re.U)
              for name in self._read_list_file(house_list_file)}
+        self.poi_list = \
+            {name: re.compile(r'\b' + name + r'\b', re.I | re.U)
+             for name in self._read_list_file(poi_list_file)}
         self.index = re.compile(r'\b' + '[0-9]{6}' + r'\b')
 
         self._address = ""   # caching variable
@@ -283,6 +288,11 @@ class AddressSplitter(object):
         """Return list of house positions in the address
         """
         return self._get_positions(address, self.house_list)
+
+    def _get_poi_pos(self, address):
+        """Return list of house positions in the address
+        """
+        return self._get_positions(address, self.poi_list)
 
     def _get_index_pos(self, address):
         """Return list of index positions in the address
@@ -348,7 +358,7 @@ class AddressSplitter(object):
         indxs = self._get_index_pos(address)
         indxs['None_position'] = [None]
 
-        poi = self._get_index_pos(address)
+        poi = self._get_poi_pos(address)
         poi['None_position'] = [None]
 
         parts = [p for p in [indxs, cntrs, regns,

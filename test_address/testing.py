@@ -15,5 +15,6 @@ SUBREGION_LIST = os.path.join(DATADIR, 'subregions.csv')
 CITY_LIST = os.path.join(DATADIR, 'cities.csv')
 STREET_LIST = os.path.join(DATADIR, 'streets.csv')
 HOUSE_LIST = os.path.join(DATADIR, 'houses.csv')
+POI_LIST = os.path.join(DATADIR, 'poi.csv')
 
 TMPFILE = os.path.join(DATADIR, 'tmp.csv')

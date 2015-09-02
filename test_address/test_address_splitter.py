@@ -21,7 +21,8 @@ from testing import (
     SUBREGION_LIST,
     CITY_LIST,
     STREET_LIST,
-    HOUSE_LIST
+    HOUSE_LIST,
+    POI_LIST
 )
 
 
@@ -95,7 +96,7 @@ class TestSplittingStrategy(unittest.TestCase):
             pass
 
         try:
-            strategy = SplitingStrategy(
+            _ = SplitingStrategy(
                 address='0123456789',
                 index_pos=None,
                 country_pos=(-1, 10),
@@ -111,7 +112,7 @@ class TestSplittingStrategy(unittest.TestCase):
             pass
 
         try:
-            strategy = SplitingStrategy(
+            _ = SplitingStrategy(
                 address='0123456789',
                 index_pos=None,
                 country_pos=(5, 3),
@@ -140,7 +141,7 @@ class TestSplittingStrategy(unittest.TestCase):
             house_pos=None,
             poi_pos=None
         )
-        self.assertEqual(strategy.get_space_penalty(),365)
+        self.assertEqual(strategy._get_space_penalty(), 365)
         
         strategy = SplitingStrategy(
             address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
@@ -153,7 +154,7 @@ class TestSplittingStrategy(unittest.TestCase):
             house_pos=(10, 11),
             poi_pos=None
         )
-        self.assertEqual(strategy.get_space_penalty(),0)
+        self.assertEqual(strategy._get_space_penalty(), 0)
         
         strategy = SplitingStrategy(
             address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
@@ -166,7 +167,7 @@ class TestSplittingStrategy(unittest.TestCase):
             house_pos=None,
             poi_pos=None
         )
-        self.assertEqual(strategy.get_space_penalty(),0)
+        self.assertEqual(strategy._get_space_penalty(), 0)
         
         strategy = SplitingStrategy(
             address='ываываыаываыаааааываырпрапрарапрапрараорпопопропрпропоппропр',
@@ -179,7 +180,7 @@ class TestSplittingStrategy(unittest.TestCase):
             house_pos=(42, 43),
             poi_pos=None
         )
-        self.assertEqual(strategy.get_space_penalty(),133)
+        self.assertEqual(strategy._get_space_penalty(), 133)
     
     def test_get_score(self):
 
@@ -310,7 +311,8 @@ class TestAddressSplitter(unittest.TestCase):
             subregion_list_file=SUBREGION_LIST,
             city_list_file=CITY_LIST,
             street_list_file=STREET_LIST,
-            house_list_file=HOUSE_LIST
+            house_list_file=HOUSE_LIST,
+            poi_list_file=POI_LIST
         )
         self.splitter = splitter
 
@@ -320,7 +322,8 @@ class TestAddressSplitter(unittest.TestCase):
                  self.splitter.city_list,
                  self.splitter.subregion_list,
                  self.splitter.region_list,
-                 self.splitter.country_list]
+                 self.splitter.country_list,
+                 self.splitter.poi_list]
         for i in range(len(parts)):
             for j in range(i+1, len(parts)):
                 self.assertNotEqual(parts[i], parts[j])
@@ -448,8 +451,15 @@ class TestAddressSplitter(unittest.TestCase):
         expected = {u'моркинский': [(27, 37)]}
         self.assertEqual(pos, expected)
 
+        address = u'sdffjj, рязанская область, остановка солнышко'
+        pos = self.splitter._get_poi_pos(address)
+        expected = {u'остановка солнышко': [(27, 45)]}
+        self.assertEqual(pos, expected)
+
     def test_get_strategies(self):
         address = u'Российская федерация, москва, улица россия'
+
+        # There are many possible startegies. List them all:
         expected = [
             Address(
                 raw_address=address,
@@ -495,9 +505,9 @@ class TestAddressSplitter(unittest.TestCase):
             Address(raw_address=address)
         ]
         for s in self.splitter._get_strategies(address):
-            if not s.get_parsed_address() in expected:
-                a = s.get_parsed_address()
-                print a.country, a.settlement, a.street, a.house
+            # if not s.get_parsed_address() in expected:
+            #     a = s.get_parsed_address()
+            #     print a.country, a.settlement, a.street, a.house
             self.assertTrue(s.get_parsed_address() in expected)
 
         self.assertEqual(len(self.splitter._get_strategies(address)),
@@ -517,6 +527,22 @@ class TestAddressSplitter(unittest.TestCase):
             street_pos=(30, 42),
             house_pos=(44, 49),
             poi_pos=None
+        )
+        self.assertEqual(got, expected)
+
+        address = u'Российская федерация, москва, улица россия, остановка Солнышко'
+        got = self.splitter.get_best_strategy(address)
+        # u',Российская федерация,,москва,улица россия'
+        expected = SplitingStrategy(
+            address=address,
+            index_pos=None,
+            country_pos=(0, 20),
+            region_pos=None,
+            subregion_pos=None,
+            city_pos=(22, 28),
+            street_pos=(30, 42),
+            house_pos=None,
+            poi_pos=(44, 62)
         )
         self.assertEqual(got, expected)
 
