@@ -18,7 +18,7 @@ class TestAddress(unittest.TestCase):
         settlement = u'Подольск'
         street = u'Малая'
         house = u'234'
-        poi = 'Станция Канавка'
+        poi = u'Станция Канавка'
 
         address = Address(
             index=index,
@@ -73,7 +73,7 @@ class TestAddress(unittest.TestCase):
         settlement = u'Подольск'
         street = u'Малая'
         house = u'234'
-        poi = 'Ресторан Рыбный'
+        poi = u'Ресторан Рыбный'
 
         address = Address(
             index=index,

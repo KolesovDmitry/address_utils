@@ -161,5 +161,5 @@ class Address(object):
         return self._poi
 
     @poi.setter
-    def house(self, value):
+    def poi(self, value):
         self._poi= value
