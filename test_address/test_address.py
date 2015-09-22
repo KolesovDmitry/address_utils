@@ -104,6 +104,42 @@ class TestAddress(unittest.TestCase):
             addr2.__dict__[key] = 'qwerty' + unicode(val)
             self.assertEqual(addr1, addr2)
 
+    def test_mask_address_parts(self):
+        index = u'123456'
+        country = u'Российская Федерация'
+        region = u'Московская область'
+        subregion = u'Подольский район'
+        settlement = u'Подольск'
+        street = u'Малая'
+        house = u'234'
+        poi = u'Станция Канавка'
+        raw_address = 'sdlkjsldjflsdfjksdjffedsjdnv'
+
+        address = Address(
+            raw_address=raw_address,
+            index=index,
+            country=country,
+            region=region,
+            subregion=subregion,
+            settlement=settlement,
+            street=street,
+            house=house,
+            poi=poi
+        )
+
+        used_parts = ['index', 'country']
+        new = address.mask_address_parts(used_parts)
+        expected = Address(raw_address=raw_address,
+                           index=index, country=country)
+        self.assertEqual(new, expected)
+
+        used_parts = ['region', 'settlement']
+        new = address.mask_address_parts(used_parts)
+        expected = Address(raw_address=raw_address,
+                           region=region, settlement=settlement)
+        # import ipdb; ipdb.set_trace()
+        self.assertEqual(new, expected)
+
 
 if __name__ == '__main__':
     suite = unittest.makeSuite(TestAddress, 'test')

@@ -1,6 +1,9 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
+import copy
+
+
 class Address(object):
     """Class for store address information
     """
@@ -154,7 +157,7 @@ class Address(object):
 
     @house.setter
     def house(self, value):
-        self._house = value   \
+        self._house = value
 
     @property
     def poi(self):
@@ -162,4 +165,21 @@ class Address(object):
 
     @poi.setter
     def poi(self, value):
-        self._poi= value
+        self._poi = value
+
+    def mask_address_parts(self, used_parts):
+        """Delete from address unused address parts. Return the modifed copy.
+
+        :param used_parts:   A list of parts, that are used, the other parts
+                             will be masked
+        :type used_parts:    list
+
+        :rtype:             Address
+        """
+        address = copy.copy(self)
+        for part in ['country', 'region', 'subregion', 'index',
+                     'settlement', 'street', 'house', 'poi']:
+            if part not in used_parts:
+                setattr(address, part, None)
+
+        return address
