@@ -7,6 +7,11 @@ import copy
 class Address(object):
     """Class for store address information
     """
+    @staticmethod
+    def address_parts_list():
+        return ['country', 'region', 'subregion', 'index',
+                'settlement', 'street', 'house', 'poi']
+
     def __init__(self,
                  raw_address=None,
                  index=None,
@@ -177,8 +182,7 @@ class Address(object):
         :rtype:             Address
         """
         address = copy.copy(self)
-        for part in ['country', 'region', 'subregion', 'index',
-                     'settlement', 'street', 'house', 'poi']:
+        for part in self.address_parts_list():
             if part not in used_parts:
                 setattr(address, part, None)
 
