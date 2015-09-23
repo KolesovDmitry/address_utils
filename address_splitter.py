@@ -40,7 +40,7 @@ class SplitingStrategy(object):
         # Penalties:
         self.overlap_penalty = 100  # penalty for overlapping parts of address
         self.blank_penalty = 10    # penalty for unused symbols in the address
-        self.space_ratio = 0.1       # factor for space penalties
+        self.space_ratio = 1       # factor for space penalties
 
         # Create position matrix:
         self.names = OrderedDict(
@@ -80,7 +80,8 @@ class SplitingStrategy(object):
             begin, end = self.names[name][1] \
                 if self.names[name][1] else (0, 0)
 
-            if (not (0 <= begin < cols + 1)) or (not (begin <= end < cols + 1)):
+            if (not (0 <= begin < cols + 1)) or \
+                    (not (begin <= end < cols + 1)):
                 raise ValueError(u'Wrong input for "%s": the positions '
                                  u'doesn\'t match address string "%s"' %
                                  (name, self.address))
@@ -154,31 +155,17 @@ class SplitingStrategy(object):
         return address
 
     def _get_space_penalty(self):
+        """Penalty for spaces betweeen address parts.
+
+        Resurns count of symbols between the first
+        and the last parts of the address
         """
-            Подсчитывает штраф за пробелы между кусками адреса,
-            как сумма квадратов длин пробелов.
-        """
-        # TODO: облагородить код функции
         sum_cols = self._score_matrix.sum(axis=0)
-        left = 0
-        for i in range(sum_cols.size):
-            if sum_cols[i] != 0:
-                left = i
-                break
-        right = left
-        for i in range(sum_cols.size):
-            if sum_cols[i] != 0 and i > right:
-                right = i
-        sum_spaces = 0
-        len = 0
-        for i in range(left, right):
-            if sum_cols[i] != 0:
-                sum_spaces += len * len
-                len = 0
-            else:
-                len += 1
-        sum_spaces += len * len
-        return sum_spaces
+        nonzeros = np.where(sum_cols > 0)[0]     # Only one row is used
+        if len(nonzeros) == 0:
+            return 0
+        left, right = nonzeros[0], nonzeros[-1]
+        return right - left
 
     def get_score(self):
         """Return weight of strategy. (Small weight is better)
@@ -202,8 +189,8 @@ class SplitingStrategy(object):
         blank_count = sum(sum_cols == 0)   # Count of unused symbols
 
         return overlapping * self.overlap_penalty + \
-               blank_count * self.blank_penalty + absence_p + \
-               self.space_ratio * self._get_space_penalty()
+            blank_count * self.blank_penalty + absence_p + \
+            self.space_ratio * self._get_space_penalty()
 
 
 class AddressSplitter(object):
@@ -490,7 +477,11 @@ if __name__ == '__main__':
     )
 
     num_lines = sum(1 for line in open(datafile))
-    pbar = ProgressBar(widgets=[Bar('=', '[', ']'), ' ', Counter(), " of " + str(num_lines), ' ', ETA()]).start()
+    pbar = ProgressBar(
+        widgets=[
+            Bar('=', '[', ']'), ' ', Counter(),
+            " of " + str(num_lines), ' ', ETA()]
+    ).start()
     pbar.maxval = num_lines
 
     with open(datafile) as data:
@@ -513,9 +504,12 @@ if __name__ == '__main__':
                 parced_address.street = ""
             if parced_address.house is None:
                 parced_address.house = ""
-            result = delimiter.join([line_text, parced_address.index, parced_address.country,
-                                     parced_address.region, parced_address.subregion,
-                                     parced_address.settlement, parced_address.street,
+            result = delimiter.join([line_text, parced_address.index,
+                                     parced_address.country,
+                                     parced_address.region,
+                                     parced_address.subregion,
+                                     parced_address.settlement,
+                                     parced_address.street,
                                      parced_address.house])
             print result.encode('utf-8')
     pbar.finish()
